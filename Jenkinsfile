@@ -1,0 +1,38 @@
+@Library('eigi-jenkins-library') _
+
+def pipeline = new ctct.v1.Pipeline(this)
+def gitCmd = new common.v1.GitCmd(this)
+def when = new common.v1.When(this)
+def runWith = new common.v1.RunWith(this)
+
+pipeline.build() {
+    stage('Clone repo') {
+        gitCmd.checkout()
+    }
+
+    runWith.ruby {
+      stage('Version') {
+
+        when.notBuildingPR {
+          env.APP_VERSION = sh(returnStdout: true, script: 'rake bump:show-next INCREMENT=patch').trim()
+        }
+
+        when.buildingPR {
+          log.info 'Setting version for PR build'
+          def currentVersion = sh(returnStdout: true, script: 'rake bump:current').trim()
+          env.APP_VERSION = "${currentVersion}-pr-${UUID.randomUUID().toString()}"
+        }
+        log.info "Version set to ${env.APP_VERSION} for this build"
+      }
+
+      stage('Build') {
+        sh(script: 'rake')
+      }
+    }
+    //parallel(javaProject.getScanners())
+    // when.buildingMaster(){
+    //     stage('Promote') {
+    //         javaProject.promoteArtifacts(buildInfo)
+    //     }
+    //  }
+}
