@@ -4,6 +4,7 @@ def pipeline = new ctct.v1.Pipeline(this)
 def gitCmd = new common.v1.GitCmd(this)
 def when = new common.v1.When(this)
 def runWith = new common.v1.RunWith(this)
+def log = new common.v1.Log(this)
 
 pipeline.build() {
     stage('Clone repo') {
@@ -11,6 +12,10 @@ pipeline.build() {
     }
 
     runWith.ruby {
+      stage('Install') {
+        sh(script: 'bundle install')
+      } 
+  
       stage('Version') {
 
         when.notBuildingPR {
