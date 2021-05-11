@@ -24,7 +24,8 @@ pipeline.build() {
 
         when.buildingPR {
           log.info 'Setting version for PR build'
-          def currentVersion = sh(returnStdout: true, script: 'rake bump:current').trim()
+          def currentVersion = sh(returnStdout: true, 
+            script: "rake bump:current | sed -ne 's/[^0-9]*\(\([0-9]\.\)\{0,4\}[0-9][^.]\).*/\1/p'").trim()
           env.APP_VERSION = "${currentVersion}-pr-${UUID.randomUUID().toString()}"
         }
         log.info "Version set to ${env.APP_VERSION} for this build"
