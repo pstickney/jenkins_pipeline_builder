@@ -42,8 +42,12 @@ pipeline.build() {
       }
     }
 
-    stage('Build') {
+    stage('Test') {
       sh(script: 'rake')
+    }
+
+     stage('Build') {
+      sh(script: 'gem build jenkins_pipeline_builder.gemspec')
     }
 
     stage('Publish') {
