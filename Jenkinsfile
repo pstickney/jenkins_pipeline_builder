@@ -51,6 +51,7 @@ pipeline.build() {
       configManager.setConfigProperty('artifactoryUrl', 'https://artifactory.roving.com/artifactory')
       configManager.setConfigProperty('artifactoryCredentialId', 'buildmaster_ad_creds')
       String repoTarget = ""
+
     
       when.buildingPR {
         repoTarget = "gems-stage/gems"
@@ -77,6 +78,8 @@ pipeline.build() {
             }
           ]
         }"""
+        echo uploadSpec
+        error()
         // repoTarget = "gems-local/gems"
         artifactory.uploadArtifact(uploadSpec, false)
       }
