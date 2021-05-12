@@ -13,7 +13,7 @@ def config = [
 
 pipeline.build(config) {
   stage('Clone repo') {
-    gitCmd.checkout()
+    checkout scm: scm
   }
 
   runWith.ruby {
