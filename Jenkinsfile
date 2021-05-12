@@ -8,7 +8,7 @@ def log = new common.v1.Log(this)
 def artifactory = new helpers.common.v1.CommonArtifactoryWrapper(this)
 def configManager = new helpers.common.v1.CommonConfigManager(this)
 
-pipeline.build([]) {
+pipeline.build() {
   stage('Clone repo') {
     gitCmd.checkout()
   }
