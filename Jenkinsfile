@@ -58,7 +58,7 @@ pipeline.build() {
 
     
       when.buildingPR {
-        repoTarget = "gems-stage/gems"
+        repoTarget = "gems-stage/gems/"
         String uploadSpec = """{
           "files": [
             {
@@ -72,7 +72,7 @@ pipeline.build() {
       }
       
       when.buildingMaster {
-        repoTarget = "gems-stage/gems"
+        repoTarget = "gems-stage/gems/"
         String uploadSpec = """{
           "files": [
             {
