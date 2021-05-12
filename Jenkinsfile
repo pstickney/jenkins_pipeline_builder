@@ -6,7 +6,6 @@ def when = new common.v1.When(this)
 def runWith = new common.v1.RunWith(this)
 def log = new common.v1.Log(this)
 def artifactory = new helpers.common.v1.CommonArtifactoryWrapper(this)
-def gitCmd = new common.v1.GitCmd(this)
 
 def config = [
   artifactoryCredentialId: 'buildmaster_ad_creds',
