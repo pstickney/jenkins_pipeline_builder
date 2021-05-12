@@ -23,6 +23,7 @@
 require 'rspec/core/rake_task'
 require 'yard'
 require 'rubocop/rake_task'
+require 'bump/tasks'
 
 RuboCop::RakeTask.new
 
