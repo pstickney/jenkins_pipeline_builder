@@ -6,6 +6,7 @@ def when = new common.v1.When(this)
 def runWith = new common.v1.RunWith(this)
 def log = new common.v1.Log(this)
 def artifactory = new helpers.common.v1.CommonArtifactoryWrapper(this)
+def gitCmd = new common.v1.GitCmd(this)
 
 def config = [
   artifactoryCredentialId: 'buildmaster_ad_creds',
@@ -24,7 +25,16 @@ pipeline.build(config) {
     stage('Version') {
       when.buildingMaster {
         env.APP_VERSION = sh(returnStdout: true, script: 'rake bump:show-next INCREMENT=patch').trim()
-        sh(script: 'rake bump:patch && git push origin master')
+        log.info "Version set to ${env.APP_VERSION} for this build"
+        
+        sh(script: 'rake bump:patch')
+        
+        gitCmd.run("git tag -a ${env.APP_VERSION} -m 'Release ${env.APP_VERSION}'")
+        String pushCommitCmd = "git push origin ${env.BRANCH_NAME}"
+        gitCmd.run(pushCommitCmd)
+
+        String tagCmd = "git push origin --tags"
+        gitCmd.run(tagCmd)
       }
 
       when.buildingPR {
@@ -32,8 +42,8 @@ pipeline.build(config) {
         def currentVersion = sh(returnStdout: true, 
           script: "rake bump:current | sed -ne 's/[^0-9]*\\(\\([0-9]\\.\\)\\{0,4\\}[0-9][^.]\\).*/\\1/p'").trim()
         env.APP_VERSION = "${currentVersion}-pr-${UUID.randomUUID().toString()}"
+        log.info "Version set to ${env.APP_VERSION} for this build"
       }
-      log.info "Version set to ${env.APP_VERSION} for this build"
     }
 
     stage('Build') {
