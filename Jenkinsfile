@@ -48,6 +48,7 @@ pipeline.build() {
 
     stage('Publish') {
       // no idea why this wasn't working through the configmap
+      configManager.setConfigProperty('artifactoryUrl', 'https://artifactory.roving.com/artifactory')
       configManager.setConfigProperty('artifactoryCredentialId', 'buildmaster_ad_creds')
       String repoTarget = ""
     
