@@ -21,5 +21,5 @@
 #
 
 module JenkinsPipelineBuilder
-  VERSION = '1.10.10'.freeze
+  VERSION = '1.10.11'.freeze
 end
