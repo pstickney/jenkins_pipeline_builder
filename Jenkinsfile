@@ -50,23 +50,32 @@ pipeline.build() {
       // no idea why this wasn't working through the configmap
       configManager.setConfigProperty('artifactoryCredentialId', 'buildmaster_ad_creds')
       String repoTarget = ""
-      String uploadSpec = """{
-        "files": [
-          {
-            "pattern": "*.gem",
-            "target": "${repoTarget}",
-            "props": "build.name=${env.JOB_NAME}"
-          }
-        ]
-      }"""
-
+    
       when.buildingPR {
         repoTarget = "gems-stage/gems"
+        String uploadSpec = """{
+          "files": [
+            {
+              "pattern": "*.gem",
+              "target": "${repoTarget}",
+              "props": "build.name=${env.JOB_NAME}"
+            }
+          ]
+        }"""
         artifactory.uploadArtifact(uploadSpec, false)
       }
       
       when.buildingMaster {
         repoTarget = "gems-stage/gems"
+        String uploadSpec = """{
+          "files": [
+            {
+              "pattern": "*.gem",
+              "target": "${repoTarget}",
+              "props": "build.name=${env.JOB_NAME}"
+            }
+          ]
+        }"""
         // repoTarget = "gems-local/gems"
         artifactory.uploadArtifact(uploadSpec, false)
       }
