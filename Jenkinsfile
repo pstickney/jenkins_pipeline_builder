@@ -24,6 +24,7 @@ pipeline.build(config) {
     stage('Version') {
       when.buildingMaster {
         env.APP_VERSION = sh(returnStdout: true, script: 'rake bump:show-next INCREMENT=patch').trim()
+        sh(script: 'rake bump:patch && git push origin master')
       }
 
       when.buildingPR {
@@ -37,16 +38,19 @@ pipeline.build(config) {
 
     stage('Build') {
       sh(script: 'rake')
-        String repoTarget = ""
-        String uploadSpec = """{
-          "files": [
-            {
-              "pattern": "*.gem",
-              "target": "${repoTarget}",
-              "props": "build.name=${env.JOB_NAME}"
-            }
-          ]
-        }"""
+    }
+
+    stage('Publish') {
+      String repoTarget = ""
+      String uploadSpec = """{
+        "files": [
+          {
+            "pattern": "*.gem",
+            "target": "${repoTarget}",
+            "props": "build.name=${env.JOB_NAME}"
+          }
+        ]
+      }"""
 
       when.buildingPR {
         repoTarget = "gems-stage/gems"
