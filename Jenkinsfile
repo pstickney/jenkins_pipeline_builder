@@ -51,40 +51,30 @@ pipeline.build() {
     }
 
     stage('Publish') {
-      // no idea why this wasn't working through the configmap
-      configManager.setConfigProperty('artifactoryUrl', 'https://artifactory.roving.com/artifactory')
-      configManager.setConfigProperty('artifactoryCredentialId', 'buildmaster_ad_creds')
       String repoTarget = ""
-
     
       when.buildingPR {
         repoTarget = "gems-stage/gems/"
-        String uploadSpec = """{
-          "files": [
-            {
-              "pattern": "*.gem",
-              "target": "${repoTarget}",
-              "props": "build.name=${env.JOB_NAME}"
-            }
-          ]
-        }"""
-        artifactory.uploadArtifact(uploadSpec, false)
       }
       
       when.buildingMaster {
-        repoTarget = "gems-stage/gems/"
-        String uploadSpec = """{
-          "files": [
-            {
-              "pattern": "*.gem",
-              "target": "${repoTarget}",
-              "props": "build.name=${env.JOB_NAME}"
-            }
-          ]
-        }"""
-        // repoTarget = "gems-local/gems"
-        artifactory.uploadArtifact(uploadSpec, false)
+        repoTarget = "gems-local/gems/"
       }
+
+      String uploadSpec = """{
+        "files": [
+          {
+            "pattern": "*.gem",
+            "target": "${repoTarget}",
+            "props": "build.name=${env.JOB_NAME}"
+          }
+        ]
+      }"""
+      
+      // no idea why this wasn't working through the configmap
+      configManager.setConfigProperty('artifactoryUrl', 'https://artifactory.roving.com/artifactory')
+      configManager.setConfigProperty('artifactoryCredentialId', 'buildmaster_ad_creds')
+      artifactory.uploadArtifact(uploadSpec, false)
     }
   }
 }
