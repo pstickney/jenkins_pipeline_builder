@@ -82,8 +82,6 @@ pipeline.build() {
             }
           ]
         }"""
-        echo uploadSpec
-        error()
         // repoTarget = "gems-local/gems"
         artifactory.uploadArtifact(uploadSpec, false)
       }
