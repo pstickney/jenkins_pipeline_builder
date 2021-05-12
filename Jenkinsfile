@@ -6,14 +6,11 @@ def when = new common.v1.When(this)
 def runWith = new common.v1.RunWith(this)
 def log = new common.v1.Log(this)
 def artifactory = new helpers.common.v1.CommonArtifactoryWrapper(this)
+def configManager = new helpers.common.v1.CommonConfigManager(this)
 
-def config = [
-  artifactoryCredentialId: 'buildmaster_ad_creds',
-]
-
-pipeline.build(config) {
+pipeline.build([]]) {
   stage('Clone repo') {
-    checkout scm: scm
+    gitCmd.checkout()
   }
 
   runWith.ruby {
@@ -50,6 +47,8 @@ pipeline.build(config) {
     }
 
     stage('Publish') {
+      // no idea why this wasn't working through the configmap
+      configManager.setConfigProperty('artifactoryCredentialId', 'buildmaster_ad_creds')
       String repoTarget = ""
       String uploadSpec = """{
         "files": [
