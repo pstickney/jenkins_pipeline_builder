@@ -36,8 +36,11 @@ pipeline.build() {
       when.buildingPR {
         log.info 'Setting version for PR build'
         def currentVersion = sh(returnStdout: true, 
-          script: "rake bump:current | sed -ne 's/[^0-9]*\\(\\([0-9]\\.\\)\\{0,4\\}[0-9][^.]\\).*/\\1/p'").trim()
-        env.APP_VERSION = "${currentVersion}-pr-${UUID.randomUUID().toString()}"
+          script: "rake bump:current | grep -Eo '([0-9]+\\.){0,2}(\\*|[0-9]+)'").trim()
+        def commit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+        env.APP_VERSION = env.VERSION = "${currentVersion}.pr.${commit}"
+        // uses env var VERSION to set version
+        sh(script: 'rake bump:set')
         log.info "Version set to ${env.APP_VERSION} for this build"
       }
     }

@@ -317,10 +317,12 @@ publisher do
 
   xml do |params|
     send('org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder', 'plugin' => 'groovy-postbuild') do
-      groovyScript params[:groovy_script]
+      send('script', 'plugin' => 'script-security') do
+        script params[:groovy_script]
+        sandbox params[:sandbox] || false
+      end
       behavior params[:behavior] || '0'
       runFormMatrixParent 'false'
-      sandbox params[:sandbox] || false
       params[:additional_classpaths] && params[:additional_classpaths].each do |path|
         send('org.jvnet.hudson.plugins.groovypostbuild.GroovyScriptPath') do
           path path[:path] || '/'
