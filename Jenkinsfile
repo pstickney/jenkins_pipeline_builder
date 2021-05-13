@@ -36,7 +36,7 @@ pipeline.build() {
       when.buildingPR {
         log.info 'Setting version for PR build'
         def currentVersion = sh(returnStdout: true, 
-          script: "rake bump:current | grep -Eo '([0-9]+\.){0,2}(\*|[0-9]+)'").trim()
+          script: "rake bump:current | grep -Eo '([0-9]+\\.){0,2}(\\*|[0-9]+)'").trim()
         def commit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
         env.APP_VERSION = env.VERSION = "${currentVersion}.pr.${commit}"
         // uses env var VERSION to set version
